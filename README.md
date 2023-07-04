@@ -27,7 +27,8 @@ First we will learn PySpark, the Perform Data Anlysis on Yahoo! Finance dataset 
 - [Advanced Operations](#advanced-operations)
     - [Repartitioning](#repartitioning)
     - [UDFs (User Defined Functions](#udfs-user-defined-functions)
-- [Analyzing Historical Stock Prices using PySpark](#advanced-operations)
+
+- [Analyzing Historical Stock Prices using PySpark](#analyzing-historical-stock-prices-using-pyspark)
 
 If you can't find what you're looking for, check out the [PySpark Official Documentation](https://spark.apache.org/docs/latest/api/python/pyspark.sql.html) and add it here!
 
