@@ -27,6 +27,7 @@ First we will learn PySpark, the Perform Data Anlysis on Yahoo! Finance dataset 
 - [Advanced Operations](#advanced-operations)
     - [Repartitioning](#repartitioning)
     - [UDFs (User Defined Functions](#udfs-user-defined-functions)
+- [Analyzing Historical Stock Prices using PySpark](#advanced-operations)
 
 If you can't find what you're looking for, check out the [PySpark Official Documentation](https://spark.apache.org/docs/latest/api/python/pyspark.sql.html) and add it here!
 
@@ -318,7 +319,7 @@ df = df.drop("row_number")
 df = df.repartition(1)
 ```
 
-#### UDFs (User Defined Functions
+#### UDFs (User Defined Functions)
 
 ```python
 # Multiply each row's age column by two
@@ -329,5 +330,82 @@ df = df.withColumn('age', times_two_udf(df.age))
 import random
 
 random_name_udf = F.udf(lambda: random.choice(['Bob', 'Tom', 'Amy', 'Jenna']))
-df = df.withColumn('name', random_name_udf())
+df = df.withColumn('name', random_name_udf()) 
+
+``` 
+
+
+
+## Analyzing Historical Stock Prices using PySpark 
+
+In this block, we import the necessary libraries. pyspark is the Python API for Apache Spark, a distributed computing framework. yfinance is a library for fetching historical stock price data. We also import specific functions from pyspark.sql.functions that we will use later for calculating mean, standard deviation, and correlation. 
+
+```python
+import pyspark
+import yfinance as yf
+from pyspark.sql.functions import mean, stddev, corr
+``` 
+
+Here, we set the variables ticker, start_date, and end_date to specify the stock ticker symbol (in this case, "AAPL" for Apple), the start date, and the end date for the historical stock price data we want to fetch. We then use the yf.download() function from the yfinance library to retrieve the stock price data within the specified date range. 
+
+```python
+ticker = "AAPL" 
+start_date = "2010-01-01"
+end_date = "2023-07-04"
+
+stock_prices_data = yf.download(ticker, start=start_date, end=end_date) 
+``` 
+
+
+This line saves the downloaded stock price data to a CSV file named "stock_prices_data.csv" in a folder called "Data".
+
+```python
+# Save file
+stock_prices_data.to_csv("Data/stock_prices_data.csv")
+``` 
+This line displays the first 5 rows of the downloaded stock price data.
+
+```python
+stock_prices_data.head(5)
 ```
+
+Here, we use spark.read.csv() to read the previously saved CSV file into a Spark DataFrame named stock_prices_df. We set the options "header" and "inferSchema" to true to indicate that the CSV file has a header row and that Spark should infer the column types automatically. 
+
+```python 
+stock_prices_df = spark.read\
+                .option("header", "true")\
+                .option("inferSchema", "true")\
+                .csv("Data/stock_prices_data.csv")
+
+
+```
+
+In this section, we calculate the mean, standard deviation, and correlation between the "Close" column (stock price) and the "Volume" column (trading volume) of the stock_prices_df DataFrame. We use the select() function along with the mean(), stddev(), and corr() functions from pyspark.sql.functions to perform these calculations. The .first()[0] retrieves the first row of the result as a single value. Finally, we print out the mean price, standard deviation price, and correlation between price and volume.
+
+```python
+# Calculate mean, standard deviation, and correlation
+mean_price = stock_prices_df.select(mean("Close")).first()[0]
+stddev_price = stock_prices_df.select(stddev("Close")).first()[0]
+corr_price_volume = stock_prices_df.select(corr("Close", "Volume")).first()[0]
+
+print("Mean Price:", mean_price)
+print("Standard Deviation Price:", stddev_price)
+print("Correlation between Price and Volume:", corr_price_volume)
+``` 
+
+In this section, we extract the "Date" and "Close" columns from the stock_prices_df DataFrame and collect the data as a list of rows. We then create separate lists for dates and prices by iterating over the collected rows. Finally, we use matplotlib.pyplot (assumed to be imported earlier) to plot the daily closing prices over the years, with dates on the x-axis and prices on the y-axis. The plot is displayed using plt.show(). 
+
+```python 
+# Daily closing prices over the years
+prices = stock_prices_df.select("Date", "Close").collect()
+dates = [row.Date for row in prices]
+prices = [row.Close for row in prices]
+
+plt.plot(dates, prices)
+plt.xlabel("Date")
+plt.ylabel("Price")
+plt.title("Daily Stock Prices")
+plt.show()
+```
+
+
