@@ -1,6 +1,13 @@
-# 🐍 📄 PySpark Cheat Sheet
+# 🐍 📄 Data Analysis using PySpark  
 
-A quick reference guide to the most commonly used patterns and functions in PySpark SQL.
+Data Analysis using PySpark is a comprehensive and powerful approach to extracting insights from large datasets. PySpark, the Python library for Apache Spark, enables data scientists and analysts to perform distributed computing and parallel processing on big data. With its robust set of tools and functions, PySpark allows users to manipulate, transform, and analyze data efficiently and at scale. Whether you are dealing with structured or unstructured data, PySpark provides a user-friendly interface to perform tasks such as data cleaning, aggregation, statistical analysis, machine learning, and more. 
+
+
+This quick reference guide serves as a handy resource for beginners and experienced practitioners alike, offering a glimpse into the essential concepts, techniques, and functions involved in data analysis using PySpark.
+
+First we will learn PySpark, the Perform Data Anlysis on Yahoo! Finance dataset with Spark.
+
+
 
 #### Table of Contents
 
